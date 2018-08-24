@@ -2,23 +2,48 @@
   <title>Fish Pond</title>
   <style>
     div{
-      z-index: 2;
-      position:relative;
+      display:flex;
+      flex-direction: column;
+      margin-top:3vh;
+      margin-right:3vw;
+      display:block;
+      z-index: 10;
+      position:fixed;
+      top:0;
+      right:0;
+    }
+    a{
+      display:block;
+    }
+    img{
+      margin-bottom:1vh;
+      height:auto;
+      width:10vw;
+    }
+    p{
+      display:block;
+      position:absolute;
+      z-index: -1;
     }
   </style>
 </head>
 
 <body>
-  <canvas/>
-
-  <script type="application/javascript" src="lib/bundle.js"></script>
   <div>
-    <a href="#">
+    <a href="https://github.com/akeatk/fish-pond" target="_blank">
       <img src="./assets/GitHub-Logo.png" />
     </a>
-    <a href="#">
-      <img src="./assets/GitHub-Logo.png" />
+    <a href="https://www.linkedin.com/in/alex-kao-556799159/" target="_blank">
+      <img src="./assets/LinkedIn_Logo.png" />
     </a>
   </div>
+  <cake>
+  <p>txt</p>
+    <canvas/>
+  </cake>
+
+  <script type="application/javascript" src="lib/bundle.js"></script>
+
+
 </body>
 </html>
