@@ -3,69 +3,61 @@
 
 ## Background and Overview
 
-Fish Pond is a digital version of a traditional outdoor fish pond. It provides you with a top down view of fish and lets you to feed them and watch them grow.
+Fish Pond is a digital adaptation of a traditional outdoor fish pond. It provides you with a top down view of fish and lets you to feed and watch them grow.
 
-A fish use a chain of circular objects, where the movement of the fish is determined by the mass and movement of the parts it is composed of. It will swim around on its own and swim towards food, which can be placed in the water by clicking. A fish will grow as it eats food. As the fish grows, it will become wider, longer, and have changes in its color.
-
-Functionality & MVP
-In Fish Pond, users will be able to:
-
-- [ ] Add fish to the pond
-- [ ] Have the fish move using a basic physics equation.
-- [ ] Feed the fish
-- [ ] See ripple effects when fish eats food
-- [ ] View the fish change as it grows, growing differently based unseen variables
+A fish uses a chain of dot objects, where the movement of the fish is determined by the mass and movement of the parts it is composed of. It will swim around on its own and swim towards food, which can be placed in the water by clicking. A fish will grow as it eats food. As the fish grows, it will become wider, longer, and has changes to its fins.
 
 --------------------------------
 
-## Wireframes
-
-This app will consist of one screen that spans the size of the inner window. There will be an options button at the bottom left corner that when pressed, shows a panel that shows options for adding fish, resetting the tank, has a tab for each fish in the pond (there will be a hard limit to the number of fish in the tank), and will also have my information.
-
-![](https://i.imgur.com/DWEzaty.png)
-
-![](https://i.imgur.com/00C8tM0.png)
+![](https://i.imgur.com/NEakQ15.png)
 
 --------------------------
 
 ## Architecture and Technologies
 
-This project will be implemented with the following technologies:
+This project uses the following technologies:
 
 * Javascript for the overall structure and logic.
 * `HTML5 Canvas` for the rendering.
 * Webpack to bundle and serve up the scripts
 
-There will be 4 scripts involved:
+There will be 6 scripts involved:
 
 * `main.js` is the webpack entry file.
 * `fish_pond.js` is responsible for handling the creation of the pond, fish, food, updating the canvas, and user input.
 * `fish.js` is responsible for the logic (growth, scaling, actions) and rendering of fish in the pond.
-* `food.js` houses the logic for food the user places.
+* `target.js` houses the logic for food the user places.
+* `ripple.js` houses the logic and visuals for ripples created when fish eat food.
 
-## Implementation Timeline
+-----------------------------------
 
-Over the weekend:
-- [ ] Finish the moving components of the fish (does not include graphics)
+## Challenges During the project
 
-Day 1:
-- [ ] Finish the graphics for the fish.
-  - [ ] uses the location and angle of the components of a fish to draw out a complete fish.
-  - [ ] Add simple fins to the fish
+The primary function that needed to be finished for the project was to get fish that moved naturally enough to not stick out as odd. The initial approach was to have a head and a chain of dots following it. As the head moved, the rest of the body followed in a chain reaction. The net movement of the parts were summed up and applied to all the parts to maintain the center o gravity. To make the fish move forward, I took the movements of the tail and used it's net change in distance every movement as an accelerator to the fish's forward movement, which is the direction the head is facing. The combination started out as odd and had wide turns, so I added some modifiers based on distance from food and difference in the angles between the food's direction and the fish head's direction to reduce the chances of fish being unable to reach food fast enough.
 
-Day 2:
-- [ ] get the general ai of the fish working
-  - [ ] start on food, which impacts the fish ai
+The next challenge was to implement fins to the fish that flowed with the rest of the fish movements. Each fin consists of several lines of dots, each with slightly different offset from one another to cover a large area when they are filled in with color. Each dot in the fin's skeleton had a average velocity over time that reduced the amount it reacted to the fish's turns.
 
-day 3:
-- [ ] finish food and fish interactions
+Both of these processes used two fundamental techniques in the dot skeleton of the fish: rotate and connecting a dot to the previous part.
 
-day 4:
-- [ ] Complete the UI that the user will interact with (the options panel)
-  - [ ] add a button to show the options panel
-  - [ ] add a button for adding fish
-  - [ ] add information such as linkedin and github of project to options panel
+Rotate:
+~~~~~
+rotate(angle){
+  const s = Math.sin(angle);
+  const c = Math.cos(angle);
 
-Bonus features:
-- [ ] provide a way to generate a string that can be re-entered into the options to add a fish. codes are not unique.
-- [ ] have fish grow patterns as they increase in size
+  const dx = this.x - this.prevPart.x;
+  const dy = this.y - this.prevPart.y;
+
+  this.x=dx*c-dy*s + this.prevPart.x;
+  this.y=dx*s+dy*c + this.prevPart.y;
+}
+~~~~~
+
+This function allowed easy realigning of dots so that I could manage angles and distances separately, which simplified the code.
+
+Connecting a dot to the previous part:
+~~~~~~~~~~~~~
+this.x = this.prevPart.x + this.fin.pieceLength * Math.cos(this.radian + Math.PI);
+this.y = this.prevPart.y + this.fin.pieceLength * Math.sin(this.radian + Math.PI);
+~~~~~~~~~~~~~
+This function pulls the dot to within a set distance of the previous piece or pushes itself away to that distance. This, in conjunction with rotate, allowed for easy manipulation of the whole fish skeleton and fins with the help of selectors for how much the dots needed to move or rotate.
